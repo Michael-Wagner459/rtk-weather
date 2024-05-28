@@ -1,6 +1,7 @@
 import CitySearch from './components/citySearch';
 import CityWeather from './components/cityWeather';
 
+//ui for application
 export default function Home() {
 	return (
 		<body>

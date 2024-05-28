@@ -10,13 +10,13 @@ import {
 
 export default function CityWeather() {
 	const cities = useSelector((state) => state.cities.cities);
-
+	//function to get averages of weather data
 	const getAverage = (array) =>
 		Math.round(
 			array.reduce((sum, currentValue) => sum + currentValue, 0) /
 				array.length
 		);
-
+	//displays cities weather with charts if they have been passed in. Has averages below each chart. If no info displays no weather data
 	const renderCities = () => {
 		if (cities.length > 0) {
 			return cities.map((city, index) => {
@@ -56,6 +56,8 @@ export default function CityWeather() {
 			return <div>No Weather Data To Show</div>;
 		}
 	};
+
+	//ui for the City Weather section of the app. Displayed in table format
 	return (
 		<table className='table'>
 			<thead>

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import store from './store/configureStore';
 const inter = Inter({ subsets: ['latin'] });
-
+//boilerplate
 export default function RootLayout({ children }) {
 	return (
 		<html lang='en'>

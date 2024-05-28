@@ -2,12 +2,17 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+//api information
 const ROOT_URL = `https://api.openweathermap.org/data/2.5/forecast?q=`;
 const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
+//changes units from api into Imperial
 const units = '&units=imperial';
-const cityObj = { cityName: null, temp: [], pressure: [], humidity: [] };
 
+//function to format data from the api request then turn it into an object to be able to push in the state
 const processWeatherData = (data, cityName) => {
+	//make obj format
+	const cityObj = { cityName: null, temp: [], pressure: [], humidity: [] };
+
 	const result = data.list.reduce((accumulator, item) => {
 		accumulator.temp.push(item.main.temp);
 		accumulator.pressure.push(item.main.pressure);
@@ -17,7 +22,7 @@ const processWeatherData = (data, cityName) => {
 	result.cityName = cityName;
 	return result;
 };
-
+//api fetch request
 export const fetchWeather = createAsyncThunk(
 	'cities/fetchWeather',
 	async (city) => {
@@ -28,24 +33,11 @@ export const fetchWeather = createAsyncThunk(
 		return finishedData;
 	}
 );
-
+//slice for application setting up state and what to do with fetchWeather if it fulfills or fails
 export const citiesSlice = createSlice({
 	name: 'cities',
 	initialState: {
-		cities: [
-			{
-				cityName: 'Austin',
-				temp: [45, 78, 99, 54, 67],
-				pressure: [22, 33, 55, 66, 32],
-				humidity: [80, 85, 100, 90, 65],
-			},
-			{
-				cityName: 'Dallas',
-				temp: [45, 78, 99, 54, 67],
-				pressure: [22, 33, 55, 66, 32],
-				humidity: [80, 85, 100, 90, 65],
-			},
-		],
+		cities: [],
 		status: 'idle',
 		error: null,
 	},
@@ -57,11 +49,12 @@ export const citiesSlice = createSlice({
 			})
 			.addCase(fetchWeather.fulfilled, (state, action) => {
 				state.status = 'succeeded';
-				state.cities = [...state.cities, action.payload];
+				state.cities.push(action.payload);
 			})
 			.addCase(fetchWeather.rejected, (state, action) => {
 				state.status = 'failed';
-				state.error = alert(action.error.message);
+				state.error = action.error.message;
+				alert('Please make sure you entered a valid city.');
 			});
 	},
 });
