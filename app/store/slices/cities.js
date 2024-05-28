@@ -2,17 +2,30 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// const ROOT_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}${units}`
-const apiKey = process.env.WEATHER_API_KEY;
+const ROOT_URL = `https://api.openweathermap.org/data/2.5/forecast?q=`;
+const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 const units = '&units=imperial';
+const cityObj = { cityName: null, temp: [], pressure: [], humidity: [] };
+
+const processWeatherData = (data, cityName) => {
+	const result = data.list.reduce((accumulator, item) => {
+		accumulator.temp.push(item.main.temp);
+		accumulator.pressure.push(item.main.pressure);
+		accumulator.humidity.push(item.main.humidity);
+		return accumulator;
+	}, cityObj);
+	result.cityName = cityName;
+	return result;
+};
 
 export const fetchWeather = createAsyncThunk(
 	'cities/fetchWeather',
-	async () => {
+	async (city) => {
 		const response = await axios.get(
-			`${ROOT_URL}${cityName}&appid=${apiKey}${units}`
+			`${ROOT_URL}${city}&appid=${apiKey}${units}`
 		);
-		return response.data;
+		const finishedData = processWeatherData(response.data, city);
+		return finishedData;
 	}
 );
 
@@ -44,11 +57,11 @@ export const citiesSlice = createSlice({
 			})
 			.addCase(fetchWeather.fulfilled, (state, action) => {
 				state.status = 'succeeded';
-				state.cities = action.payload;
+				state.cities = [...state.cities, action.payload];
 			})
 			.addCase(fetchWeather.rejected, (state, action) => {
 				state.status = 'failed';
-				state.error = action.error.message;
+				state.error = alert(action.error.message);
 			});
 	},
 });

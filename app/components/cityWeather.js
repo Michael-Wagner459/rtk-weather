@@ -12,8 +12,10 @@ export default function CityWeather() {
 	const cities = useSelector((state) => state.cities.cities);
 
 	const getAverage = (array) =>
-		array.reduce((sum, currentValue) => sum + currentValue, 0) /
-		array.length;
+		Math.round(
+			array.reduce((sum, currentValue) => sum + currentValue, 0) /
+				array.length
+		);
 
 	const renderCities = () => {
 		if (cities.length > 0) {
